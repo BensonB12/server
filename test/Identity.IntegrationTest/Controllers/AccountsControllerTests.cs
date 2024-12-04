@@ -25,6 +25,10 @@ namespace Bit.Identity.IntegrationTest.Controllers;
 public class AccountsControllerTests : IClassFixture<IdentityApplicationFactory>
 {
     private readonly IdentityApplicationFactory _factory;
+    private static string TestEmail(string name)
+    {
+        return $"test+register+{name}@email.com";
+    }
 
     public AccountsControllerTests(IdentityApplicationFactory factory)
     {
@@ -75,7 +79,7 @@ public class AccountsControllerTests : IClassFixture<IdentityApplicationFactory>
         var localFactory = new IdentityApplicationFactory();
         localFactory.UpdateConfiguration("globalSettings:disableUserRegistration", "true");
 
-        var email = $"test+register+{name}@email.com";
+        var email = TestEmail(name);
         var model = new RegisterSendVerificationEmailRequestModel
         {
             Email = email,
@@ -94,7 +98,7 @@ public class AccountsControllerTests : IClassFixture<IdentityApplicationFactory>
     [BitAutoData(false)]
     public async Task PostRegisterSendEmailVerification_WhenGivenNewOrExistingUser__WithEnableEmailVerificationTrue_ReturnsNoContent(bool shouldPreCreateUser, string name, bool receiveMarketingEmails)
     {
-        var email = $"test+register+{name}@email.com";
+        var email = TestEmail(name);
         if (shouldPreCreateUser)
         {
             await CreateUserAsync(email, name);
@@ -123,7 +127,7 @@ public class AccountsControllerTests : IClassFixture<IdentityApplicationFactory>
         var localFactory = new IdentityApplicationFactory();
         localFactory.UpdateConfiguration("globalSettings:enableEmailVerification", "false");
 
-        var email = $"test+register+{name}@email.com";
+        var email = TestEmail(name);
         if (shouldPreCreateUser)
         {
             await CreateUserAsync(email, name, localFactory);
@@ -172,7 +176,7 @@ public class AccountsControllerTests : IClassFixture<IdentityApplicationFactory>
         });
 
         // we must first call the send verification email endpoint to trigger the first part of the process
-        var email = $"test+register+{name}@email.com";
+        var email = TestEmail(name);
         var sendVerificationEmailReqModel = new RegisterSendVerificationEmailRequestModel
         {
             Email = email,
@@ -235,7 +239,7 @@ public class AccountsControllerTests : IClassFixture<IdentityApplicationFactory>
         var localFactory = new IdentityApplicationFactory();
         localFactory.UpdateConfiguration("globalSettings:disableUserRegistration", "true");
 
-        var email = $"test+register+{name}@email.com";
+        var email = TestEmail(name);
 
         // Now we call the finish registration endpoint with the email verification token
         var registerFinishReqModel = new RegisterFinishRequestModel
@@ -557,7 +561,7 @@ public class AccountsControllerTests : IClassFixture<IdentityApplicationFactory>
         // Localize substitutions to this test.
         var localFactory = new IdentityApplicationFactory();
 
-        var email = $"test+register+{name}@email.com";
+        var email = TestEmail(name);
         var registrationEmailVerificationTokenable = new RegistrationEmailVerificationTokenable(email);
 
         localFactory.SubstituteService<IDataProtectorTokenFactory<RegistrationEmailVerificationTokenable>>(emailVerificationTokenDataProtectorFactory =>

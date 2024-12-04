@@ -5,46 +5,33 @@ namespace Bit.Test.Common.Test;
 
 public class TestCaseHelperTests
 {
-    [Fact]
-    public void GetCombinations_EmptyList()
+    public static IEnumerable<object[]> GetCombinationsData()
     {
-        Assert.Equal(new[] { Array.Empty<int>() }, TestCaseHelper.GetCombinations(Array.Empty<int>()).ToArray());
+        yield return new object[] { Array.Empty<int>(), new[] { Array.Empty<int>() } };
+        yield return new object[] { new[] { 1 }, new[] { Array.Empty<int>(), new[] { 1 } } };
+        yield return new object[] { new[] { 1, 2 }, new[] { Array.Empty<int>(), new[] { 2 }, new[] { 1 }, new[] { 1, 2 } } };
     }
 
-    [Fact]
-    public void GetCombinations_OneItemList()
+    [Theory]
+    [MemberData(nameof(GetCombinationsData))]
+    public void GetCombinations(int[] input, int[][] expected)
     {
-        Assert.Equal(new[] { Array.Empty<int>(), new[] { 1 } }, TestCaseHelper.GetCombinations(1));
+        Assert.Equal(expected, TestCaseHelper.GetCombinations(input).ToArray());
     }
 
-    [Fact]
-    public void GetCombinations_TwoItemList()
+    public static IEnumerable<object[]> GetCombinationsOfMultipleListsData()
     {
-        Assert.Equal(new[] { Array.Empty<int>(), new[] { 2 }, new[] { 1 }, new[] { 1, 2 } }, TestCaseHelper.GetCombinations(1, 2));
+        yield return new object[] { new object[] { 1 }, new object[] { "1" }, new object[] { new object[] { 1, "1" } } };
+        yield return new object[] { new object[] { 1 }, new object[] { "1", "2" }, new object[] { new object[] { 1, "1" }, new object[] { 1, "2" } } };
+        yield return new object[] { new object[] { 1, 2 }, new object[] { "1" }, new object[] { new object[] { 1, "1" }, new object[] { 2, "1" } } };
+        yield return new object[] { new object[] { 1, 2 }, new object[] { "1", "2" }, new object[] { new object[] { 1, "1" }, new object[] { 1, "2" }, new object[] { 2, "1" }, new object[] { 2, "2" } } };
     }
 
-    [Fact]
-    public void GetCombinationsOfMultipleLists_OneOne()
+    [Theory]
+    [MemberData(nameof(GetCombinationsOfMultipleListsData))]
+    public void GetCombinationsOfMultipleLists(object[] list1, object[] list2, object[] expected)
     {
-        Assert.Equal(new[] { new object[] { 1, "1" } }, TestCaseHelper.GetCombinationsOfMultipleLists(new object[] { 1 }, new object[] { "1" }));
+        Assert.Equal(expected, TestCaseHelper.GetCombinationsOfMultipleLists(list1, list2));
     }
 
-
-    [Fact]
-    public void GetCombinationsOfMultipleLists_OneTwo()
-    {
-        Assert.Equal(new[] { new object[] { 1, "1" }, new object[] { 1, "2" } }, TestCaseHelper.GetCombinationsOfMultipleLists(new object[] { 1 }, new object[] { "1", "2" }));
-    }
-
-    [Fact]
-    public void GetCombinationsOfMultipleLists_TwoOne()
-    {
-        Assert.Equal(new[] { new object[] { 1, "1" }, new object[] { 2, "1" } }, TestCaseHelper.GetCombinationsOfMultipleLists(new object[] { 1, 2 }, new object[] { "1" }));
-    }
-
-    [Fact]
-    public void GetCombinationsOfMultipleLists_TwoTwo()
-    {
-        Assert.Equal(new[] { new object[] { 1, "1" }, new object[] { 1, "2" }, new object[] { 2, "1" }, new object[] { 2, "2" } }, TestCaseHelper.GetCombinationsOfMultipleLists(new object[] { 1, 2 }, new object[] { "1", "2" }));
-    }
 }
